@@ -1,0 +1,55 @@
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.car
+hs_err_pid*
+replay_pid*
+
+### Spring Boot ###
+application-*.properties
+application-*.yml
+
+### Environment / Secrets ###
+.env
+.env.*
+*.key
+*.pem
+*.crt
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+out/
+
+# IntelliJ plugin-specific
+.idea_modules/
+*.ipr
+
+### Logs ###
+*.log
+
+### OS Files ###
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+### Temporary Files ###
+*~
+*.swp
+*.swo
+
