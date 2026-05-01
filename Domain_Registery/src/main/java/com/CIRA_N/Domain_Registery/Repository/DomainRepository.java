@@ -1,4 +1,4 @@
-package Repository;
+package com.CIRA_N.Domain_Registery.Repository;
 
 import com.CIRA_N.Domain_Registery.model.Domain;
 import org.springframework.stereotype.Repository;
