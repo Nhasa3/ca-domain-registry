@@ -1,7 +1,7 @@
 package com.CIRA_N.Domain_Registery.model;
 
+import com.CIRA_N.Domain_Registery.enums.Role;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
