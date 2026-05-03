@@ -80,5 +80,28 @@ public class DomainService {
                 .orElseThrow(() -> new RuntimeException("Domain not found"));
     }
 
+    // -- GET EXPIRING DOMAINS (admin only)
+    public List<Domain> getExpiringDomains(){
+        LocalDate today = LocalDate.now();
+        LocalDate thirtyDaysFromNow = today.plusDays(30);
+        return domainRepository.findByExpiresAtBetween(today, thirtyDaysFromNow);
+    }
 
+    // -- DELETE A DOMAIN (Admin only)
+    public void deleteDomain(Long domainId){
+        domainRepository.deleteById(domainId);
+    }
+
+    // -- UPDATE EXPIRED DOMAINS
+    public void updateExpiredDomains(){
+        List<Domain> allDomains = domainRepository.findAll();
+        for(Domain domain : allDomains){
+            if(domain.getExpiry().isBefore(LocalDate.now())
+                && domain.getStatus() == DomainStatus.ACTIVE){
+                domain.setStatus(DomainStatus.EXPIRED);
+                domainRepository.save(domain);
+
+            }
+        }
+    }
 }
