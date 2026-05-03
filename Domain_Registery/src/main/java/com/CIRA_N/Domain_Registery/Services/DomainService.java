@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class DomainService {
@@ -66,6 +67,18 @@ public class DomainService {
         domain.setStatus(DomainStatus.ACTIVE);
 
         return domainRepository.save(domain);
-
     }
+
+    // -- GET USER'S DOMAINS
+    public List<Domain> getDomainsForUser(User user){
+        return domainRepository.findByOwner(user);
+    }
+
+    //GET SINGLE DOMAIN
+    public Domain getDomainById(Long id){
+        return domainRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Domain not found"));
+    }
+
+
 }
