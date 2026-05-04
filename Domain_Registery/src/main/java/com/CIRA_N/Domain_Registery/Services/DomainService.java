@@ -64,7 +64,7 @@ public class DomainService {
                 : LocalDate.now();
 
         domain.setExpiry(baseDate.plusYears(1));
-        domain.setStatus(DomainStatus.ACTIVE);
+        domain.setStatus(String.valueOf(DomainStatus.ACTIVE));
 
         return domainRepository.save(domain);
     }
