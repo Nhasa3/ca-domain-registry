@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class DomainService {
@@ -63,9 +64,44 @@ public class DomainService {
                 : LocalDate.now();
 
         domain.setExpiry(baseDate.plusYears(1));
-        domain.setStatus(DomainStatus.ACTIVE);
+        domain.setStatus(String.valueOf(DomainStatus.ACTIVE));
 
         return domainRepository.save(domain);
+    }
 
+    // -- GET USER'S DOMAINS
+    public List<Domain> getDomainsForUser(User user){
+        return domainRepository.findByOwner(user);
+    }
+
+    //GET SINGLE DOMAIN
+    public Domain getDomainById(Long id){
+        return domainRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Domain not found"));
+    }
+
+    // -- GET EXPIRING DOMAINS (admin only)
+    public List<Domain> getExpiringDomains(){
+        LocalDate today = LocalDate.now();
+        LocalDate thirtyDaysFromNow = today.plusDays(30);
+        return domainRepository.findByExpiresAtBetween(today, thirtyDaysFromNow);
+    }
+
+    // -- DELETE A DOMAIN (Admin only)
+    public void deleteDomain(Long domainId){
+        domainRepository.deleteById(domainId);
+    }
+
+    // -- UPDATE EXPIRED DOMAINS
+    public void updateExpiredDomains(){
+        List<Domain> allDomains = domainRepository.findAll();
+        for(Domain domain : allDomains){
+            if(domain.getExpiry().isBefore(LocalDate.now())
+                && domain.getStatus() == DomainStatus.ACTIVE){
+                domain.setStatus(DomainStatus.EXPIRED);
+                domainRepository.save(domain);
+
+            }
+        }
     }
 }
