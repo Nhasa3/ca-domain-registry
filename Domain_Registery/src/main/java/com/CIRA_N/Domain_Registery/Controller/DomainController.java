@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
 import java.util.List;
@@ -121,6 +122,44 @@ public class DomainController {
         model.addAttribute("recentDomains", domains.stream().limit(5).toList());
 
         return "dashboard/user-dashboard";
+    }
+
+    // ── SHOW RENEW PAGE ──────────────────────────────────────────────
+    @GetMapping("/{id}/renew")
+    public String showRenewPage(
+            @PathVariable Long id,
+            Principal principal,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            Domain domain = domainService.getDomainById(id);
+            model.addAttribute("domain", domain);
+            return "domain/renew";  // loads templates/domain/renew.html
+
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/domains/my";
+        }
+    }
+
+    // ── HANDLE RENEW SUBMIT ──────────────────────────────────────────
+    @PostMapping("/{id}/renew")
+    public String renewDomain(
+            @PathVariable Long id,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            User currentUser = getCurrentUser(principal);
+            domainService.renewDomain(id, currentUser);
+            redirectAttributes.addFlashAttribute("success", "Domain renewed successfully!");
+            return "redirect:/domains/my";
+
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/domains/my";
+        }
     }
 
 }
