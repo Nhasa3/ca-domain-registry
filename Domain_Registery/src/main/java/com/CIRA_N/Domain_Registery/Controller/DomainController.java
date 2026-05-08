@@ -8,8 +8,10 @@ import com.CIRA_N.Domain_Registery.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -50,6 +52,33 @@ public class DomainController {
         return "search-result";  // Loads templates/serach-result.html
     }
 
-    
+    // Show domain registration form
+    @GetMapping("/register")
+    public String showRegisterForm(
+            @RequestParam(required = false) String name,
+            Model model
+    ){
+        model.addAttribute("domainName", name != null ? name : "");
+        return "domain/register";
+    }
+
+    // Handle Domain Registration submit
+    @PostMapping("/register")
+    public String registerDomain(
+            @RequestParam String domainName,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ){
+        try{
+            User currentUser = getCurrentUser(principal);
+            domainService.registerDomain(domainName, currentUser);
+            redirectAttributes.addFlashAttribute("success",
+                    "Domain '" + domainName + "' registered successfully!");
+            return "redirect:/domains/my";
+        }catch (RuntimeException e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/domains/register";
+        }
+    }
 
 }
