@@ -45,4 +45,17 @@ public class AdminController {
         return "admin/dashboard";  // loads templates/admin/dashboard.html
     }
 
+    // ── ALL DOMAINS ──────────────────────────────────────────────────
+    @GetMapping("/domains")
+    public String allDomains(Model model) {
+        model.addAttribute("domains", domainService.getAllDomains());
+        return "admin/all-domains";
+    }
+
+    // ── EXPIRING DOMAINS ─────────────────────────────────────────────
+    @GetMapping("/domains/expiring")
+    public String expiringDomains(Model model) {
+        model.addAttribute("domains", domainService.getExpiringDomains());
+        return "admin/expiring-domains";
+    }
 }
