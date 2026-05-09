@@ -76,4 +76,40 @@ public class AdminController {
         }
         return "redirect:/admin/domains";
     }
+// ── ALL USERS ────────────────────────────────────────────────────
+@GetMapping("/users")
+public String allUsers(Model model) {
+    model.addAttribute("users", userService.getAllUsers());
+    return "admin/all-users";
+}
+
+// -- DEACTIVATE USER
+@PostMapping("/users/{id}/deactivate")
+public String deactivateUser(
+        @PathVariable Long id,
+        RedirectAttributes redirectAttributes
+){
+    try{
+        userService.deactivateUser(id);
+        redirectAttributes.addFlashAttribute("succes", "User deactivated");
+    }catch (RuntimeException e){
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
+    }
+    return "redirect:/admin/users";
+}
+
+// ── ACTIVATE USER ────────────────────────────────────────────────
+@PostMapping("/users/{id}/activate")
+public String activateUser(
+        @PathVariable Long id,
+        RedirectAttributes redirectAttributes) {
+
+    try {
+        userService.activateUser(id);
+        redirectAttributes.addFlashAttribute("success", "User activated.");
+    } catch (RuntimeException e) {
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
+    }
+    return "redirect:/admin/users";
+}
 }
