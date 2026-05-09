@@ -8,7 +8,10 @@ import com.CIRA_N.Domain_Registery.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -57,5 +60,20 @@ public class AdminController {
     public String expiringDomains(Model model) {
         model.addAttribute("domains", domainService.getExpiringDomains());
         return "admin/expiring-domains";
+    }
+
+    // -- DELETE DOMAIN
+    @PostMapping("/domain/{id}/delete")
+    public String deleteDomain(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes
+    ){
+        try {
+            domainService.deleteDomain(id);
+            redirectAttributes.addFlashAttribute("sucess", "Domain deleted");
+        }catch (RuntimeException e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/domains";
     }
 }
