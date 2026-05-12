@@ -2,9 +2,10 @@ package com.CIRA_N.Domain_Registery.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
-@Table(name = "Domain")
+@Table(name = "Domains")
 public class Domain {
 
     @Id
@@ -18,14 +19,19 @@ public class Domain {
     private String status;
 
     @Column
-    private LocalDate expiry;
+    private LocalDate expiresAt;
+
+    // Many domains belong to one user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     public Domain(){}
 
-    public Domain(String domainName, String status, LocalDate expiry) {
+    public Domain(String domainName, String status, LocalDate expiresAt) {
         this.domainName = domainName;
         this.status = status;
-        this.expiry = expiry;
+        this.expiresAt = expiresAt;
     }
 
     public Long getId() {
@@ -48,12 +54,24 @@ public class Domain {
         this.status = status;
     }
 
-    public LocalDate getExpiry() {
-        return expiry;
+    public LocalDate getExpiresAt() {
+        return expiresAt;
     }
 
-    public void setExpiry(LocalDate expiry) {
-        this.expiry = expiry;
+    public void setExpiry(LocalDate expiresAt) {
+        this.expiresAt = expiresAt;
+    }
+
+    // Is this domain expiring within the next 30 days?
+    public boolean isExpiringSoon(){
+        return expiresAt.isBefore(LocalDate.now().plusDays(30))
+                && status == DomainStatus.ACTIVE;
+    }
+
+    // How many days until expiry
+    public long daysUntillExpiry(){
+        return ChronoUnit.DAYS.between(LocalDate.now(), expiresAt);
     }
 }
+
 
