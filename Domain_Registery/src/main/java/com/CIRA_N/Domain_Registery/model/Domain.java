@@ -2,9 +2,10 @@ package com.CIRA_N.Domain_Registery.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
-@Table(name = "Domain")
+@Table(name = "Domains")
 public class Domain {
 
     @Id
@@ -14,27 +15,23 @@ public class Domain {
     @Column(name = "domain_name", nullable = false, unique = true)
     private String domainName;
 
-    @Column
-    private String owner;
-
     @Column(nullable = false)
     private String status;
 
     @Column
-    private LocalDate register;
+    private LocalDate expiresAt;
 
-
-    @Column
-    private LocalDate expiry;
+    // Many domains belong to one user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     public Domain(){}
 
-    public Domain(String domainName, String owner, String status, LocalDate register, LocalDate expiry) {
+    public Domain(String domainName, String status, LocalDate expiresAt) {
         this.domainName = domainName;
         this.status = status;
-        this.expiry = expiry;
-        this.register = register;
-        this.owner = owner;
+        this.expiresAt = expiresAt;
     }
 
     public Long getId() {
@@ -49,14 +46,6 @@ public class Domain {
         this.domainName = domainName;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -65,19 +54,24 @@ public class Domain {
         this.status = status;
     }
 
-    public LocalDate getRegister() {
-        return register;
+    public LocalDate getExpiresAt() {
+        return expiresAt;
     }
 
-    public void setRegister(LocalDate register) {
-        this.register = register;
-    }
-    public LocalDate getExpiry() {
-        return expiry;
+    public void setExpiry(LocalDate expiresAt) {
+        this.expiresAt = expiresAt;
     }
 
-    public void setExpiry(LocalDate expiry) {
-        this.expiry = expiry;
+    // Is this domain expiring within the next 30 days?
+    public boolean isExpiringSoon(){
+        return expiresAt.isBefore(LocalDate.now().plusDays(30))
+                && status == DomainStatus.ACTIVE;
+    }
+
+    // How many days until expiry
+    public long daysUntillExpiry(){
+        return ChronoUnit.DAYS.between(LocalDate.now(), expiresAt);
     }
 }
+
 
