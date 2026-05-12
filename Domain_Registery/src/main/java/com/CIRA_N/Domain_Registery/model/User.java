@@ -3,6 +3,8 @@ package com.CIRA_N.Domain_Registery.model;
 import com.CIRA_N.Domain_Registery.enums.Role;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -12,7 +14,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String fullName;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -27,7 +29,7 @@ public class User {
     public User() {}
 
     public User(String name, String email, String password, Role role) {
-        this.name = name;
+        this.fullName = name;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -37,12 +39,12 @@ public class User {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -67,6 +69,12 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setActive(boolean b) {
+    }
+
+    public void setCreatedAt(LocalDate now) {
     }
 }
 
