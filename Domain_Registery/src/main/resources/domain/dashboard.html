@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <h2>⚙️ Admin Dashboard</h2>
+
+    <!-- System Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3 th:text="${totalDomains}">0</h3>
+            <p>Total Domains</p>
+        </div>
+        <div class="stat-card active">
+            <h3 th:text="${activeDomains}">0</h3>
+            <p>Active</p>
+        </div>
+        <div class="stat-card danger">
+            <h3 th:text="${expiredDomains}">0</h3>
+            <p>Expired</p>
+        </div>
+        <div class="stat-card warning">
+            <h3 th:text="${expiringCount}">0</h3>
+            <p>Expiring in 30 Days</p>
+        </div>
+        <div class="stat-card">
+            <h3 th:text="${totalUsers}">0</h3>
+            <p>Registered Users</p>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-actions">
+        <a th:href="@{/admin/domains}" class="btn-primary">All Domains</a>
+        <a th:href="@{/admin/domains/expiring}" class="btn-warning">Expiring Domains</a>
+        <a th:href="@{/admin/users}" class="btn-secondary">All Users</a>
+    </div>
+
+    <!-- Recent Domains -->
+    <h3>Recent Registrations</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Domain</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>Expires</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="domain : ${recentDomains}">
+            <td th:text="${domain.domainName}"></td>
+            <td th:text="${domain.owner.fullName}"></td>
+            <td>
+          <span class="badge"
+                th:text="${domain.status}"
+                th:classappend="${domain.status == 'ACTIVE'} ? 'badge-active' : 'badge-expired'">
+          </span>
+            </td>
+            <td th:text="${domain.expiresAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
