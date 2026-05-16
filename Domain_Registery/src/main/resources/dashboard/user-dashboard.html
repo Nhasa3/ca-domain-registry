@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+
+    <h2>Welcome, <span th:text="${user.fullName}"></span> 👋</h2>
+
+    <!-- Summary Cards -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3 th:text="${totalDomains}">0</h3>
+            <p>Total Domains</p>
+        </div>
+
+        <div class="stat-card active">
+            <h3 th:text="${activeCount}">0</h3>
+            <p>Active</p>
+        </div>
+
+        <div class="stat-card warning">
+            <h3 th:text="${expiringSoon}">0</h3>
+            <p>Expiring Soon</p>
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <a th:href="@{/domains/register}" class="btn-primary">
+            + Register New Domain
+        </a>
+        <a th:href="@{/domains/my}" class="btn-secondary">
+            View All My Domains
+        </a>
+    </div>
+
+    <!-- Recent Domains -->
+    <h3>Recent Domains</h3>
+    <table class="table" th:if="${not #lists.isEmpty(recentDomains)}">
+        <thead>
+        <tr>
+            <th>Domain</th>
+            <th>Status</th>
+            <th>Expires</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="domain : ${recentDomains}">
+            <td th:text="${domain.domainName}"></td>
+            <td>
+          <span th:text="${domain.status}"
+                th:classappend="${domain.status == 'ACTIVE'} ? 'badge-active' : 'badge-expired'"
+                class="badge">
+          </span>
+            </td>
+            <td th:text="${domain.expiresAt}"></td>
+            <td>
+                <a th:href="@{/domains/{id}/renew(id=${domain.id})}"
+                   class="btn-small">Renew</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p th:if="${#lists.isEmpty(recentDomains)}">
+        You have no domains yet.
+        <a th:href="@{/domains/register}">Register your first domain</a>
+    </p>
+
+</div>
+
+</body>
+</html>
