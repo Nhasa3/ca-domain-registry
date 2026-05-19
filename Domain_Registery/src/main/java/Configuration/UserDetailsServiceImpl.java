@@ -1,4 +1,4 @@
-package Configuration;
+package com.CIRA_N.Domain_Registery.Configuration;
 
 import com.CIRA_N.Domain_Registery.Repository.UserRepository;
 import com.CIRA_N.Domain_Registery.model.User;
@@ -19,24 +19,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email)
-        throws UsernameNotFoundException{
+            throws UsernameNotFoundException {
 
-        //Find user in database by email
+        // Find user in database by email
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("No account found for: " + email));
 
-        //Check if account is active
-        if(!user.isActive()){
-            throw new UsernameNotFoundException("Account is deactivated ");
+        // Check if account is active
+        if (!user.isActive()) {
+            throw new UsernameNotFoundException("Account is deactivated.");
         }
 
-        // Return Spring Security's UserDetails object
-        // Role_ prefic is required by Spring Security
+        // ROLE_ prefix in all caps is required by Spring Security
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority("Role_" + user.getRole().getName())));
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
     }
-
 }
