@@ -5,73 +5,66 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 @Entity
-@Table(name = "Domains")
+@Table(name = "domains")
 public class Domain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "domain_name", nullable = false, unique = true)
     private String domainName;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private DomainStatus status;
 
-    @Column
+    @Column(nullable = false)
+    private LocalDate registeredAt;
+
+    @Column(nullable = false)
     private LocalDate expiresAt;
 
-    // Many domains belong to one user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    public Domain(){}
+    // ── CONSTRUCTORS ──────────────────────────────────────────────────
+    public Domain() {}
 
-    public Domain(String domainName, String status, LocalDate expiresAt) {
+    public Domain(String domainName, DomainStatus status,
+                  LocalDate registeredAt, LocalDate expiresAt) {
         this.domainName = domainName;
         this.status = status;
+        this.registeredAt = registeredAt;
         this.expiresAt = expiresAt;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // ── GETTERS & SETTERS ─────────────────────────────────────────────
+    public Long getId() { return id; }
 
-    public String getDomainName() {
-        return domainName;
-    }
+    public String getDomainName() { return domainName; }
+    public void setDomainName(String domainName) { this.domainName = domainName; }
 
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
-    }
+    public DomainStatus getStatus() { return status; }
+    public void setStatus(DomainStatus status) { this.status = status; }
 
-    public String getStatus() {
-        return status;
-    }
+    public LocalDate getRegisteredAt() { return registeredAt; }
+    public void setRegisteredAt(LocalDate registeredAt) { this.registeredAt = registeredAt; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public LocalDate getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(LocalDate expiresAt) { this.expiresAt = expiresAt; }
 
-    public LocalDate getExpiresAt() {
-        return expiresAt;
-    }
+    public User getOwner() { return owner; }
+    public void setOwner(User owner) { this.owner = owner; }
 
-    public void setExpiry(LocalDate expiresAt) {
-        this.expiresAt = expiresAt;
-    }
-
-    // Is this domain expiring within the next 30 days?
-    public boolean isExpiringSoon(){
+    // ── HELPER METHODS ────────────────────────────────────────────────
+    public boolean isExpiringSoon() {
         return expiresAt.isBefore(LocalDate.now().plusDays(30))
                 && status == DomainStatus.ACTIVE;
     }
 
-    // How many days until expiry
-    public long daysUntillExpiry(){
+    public long daysUntilExpiry() {
         return ChronoUnit.DAYS.between(LocalDate.now(), expiresAt);
     }
 }
-
-

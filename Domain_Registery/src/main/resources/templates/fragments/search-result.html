@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search Result</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <h2>Search Result</h2>
+
+    <!-- AVAILABLE -->
+    <div th:if="${available}" class="result-card available">
+        <h3>✅ <span th:text="${domainName}"></span> is Available!</h3>
+        <p>Register this domain today for one year.</p>
+        <a th:href="@{/domains/register(name=${domainName})}"
+           class="btn-primary">Register Now</a>
+    </div>
+
+    <!-- TAKEN -->
+    <div th:unless="${available}" class="result-card taken">
+        <h3>❌ <span th:text="${domainName}"></span> is Already Taken</h3>
+        <div th:if="${domain}">
+            <p>Status:
+                <span th:text="${domain.status}" class="badge"></span>
+            </p>
+            <p>Expires:
+                <span th:text="${domain.expiresAt}"></span>
+            </p>
+        </div>
+        <p>Try searching for a different domain name.</p>
+    </div>
+
+    <br>
+    <a th:href="@{/}" class="btn-secondary">← Search Again</a>
+</div>
+
+</body>
+</html>

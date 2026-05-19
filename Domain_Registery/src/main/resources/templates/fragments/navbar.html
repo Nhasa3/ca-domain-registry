@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<nav th:fragment="navbar">
+    <div class="navbar">
+        <a th:href="@{/}" class="navbar-brand">CA Registery</a>
+
+        <div class="navbar-links">
+            <a th:href="@{/}">Home</a>
+            <a th:href="@{/about}">About</a>
+
+            <!-- Show these only when logged in -->
+            <span sec:authorize="isAuthenticated()">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <a th:href="@{/domains/my}">My Domains</a>
+            </span>
+
+            <!-- Show only for ADMIN -->
+            <span sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/dashboard}">Admin</a>
+            </span>
+
+            <!-- Not logged in -->
+            <span sec:authorize="isAnonymous()">
+                <a th:href="@{/login}">Login</a>
+                <a th:href="@{/register}" class="btn-primary">Sign Up</a>
+            </span>
+
+            <!-- Logged in — show logout -->
+            <span sec:authorize="isAuthenticated()">
+                <a th:href="@{/logout}">Logout</a>
+            </span>
+
+        </div>
+    </div>
+</nav>
+</body>
+</html>

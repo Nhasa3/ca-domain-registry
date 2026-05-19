@@ -1,6 +1,7 @@
 package Configuration;
 
 import com.CIRA_N.Domain_Registery.Repository.UserRepository;
+import com.CIRA_N.Domain_Registery.model.Role;
 import com.CIRA_N.Domain_Registery.model.User;
 import org.hibernate.boot.model.process.internal.UserTypeResolution;
 import org.springframework.beans.factory.annotation.Autowired;

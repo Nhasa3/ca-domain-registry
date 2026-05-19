@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Domains</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <div class="page-header">
+        <h2>My Domains</h2>
+        <a th:href="@{/domains/register}" class="btn-primary">+ Register New</a>
+    </div>
+
+    <!-- Summary badges -->
+    <div class="summary-row">
+        <span class="badge-active">Active: <strong th:text="${activeCount}"></strong></span>
+        <span class="badge-expired">Expired: <strong th:text="${expiredCount}"></strong></span>
+        <span>Total: <strong th:text="${totalCount}"></strong></span>
+    </div>
+
+    <!-- Domains Table -->
+    <table class="table" th:if="${not #lists.isEmpty(domains)}">
+        <thead>
+        <tr>
+            <th>Domain Name</th>
+            <th>Status</th>
+            <th>Registered</th>
+            <th>Expires</th>
+            <th>Days Left</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="domain : ${domains}">
+            <td th:text="${domain.domainName}"></td>
+            <td>
+          <span class="badge"
+                th:text="${domain.status}"
+                th:classappend="${domain.status == 'ACTIVE'} ? 'badge-active' : 'badge-expired'">
+          </span>
+            </td>
+            <td th:text="${domain.registeredAt}"></td>
+            <td th:text="${domain.expiresAt}"></td>
+            <td th:text="${domain.daysUntilExpiry()}"></td>
+            <td>
+                <a th:href="@{/domains/{id}/renew(id=${domain.id})}"
+                   class="btn-small">Renew</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p th:if="${#lists.isEmpty(domains)}">
+        No domains yet. <a th:href="@{/domains/register}">Register one now</a>
+    </p>
+
+</div>
+
+</body>
+</html>

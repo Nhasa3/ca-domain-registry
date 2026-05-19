@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>CA Domain Registry</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Find Your Perfect .CA Domain</h1>
+    <p>Register, manage, and renew your Canadian domain names in one place.</p>
+
+    <!-- Domain Search Form -->
+    <form th:action="@{/domains/search}" method="get" class="search-form">
+        <input type="text" name="name" placeholder="Search for domain (e.g. mybusiness.ca)" required class="search-input"/>
+        <button type="submit" class="btn-primary">Check availability</button>
+    </form>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <h3>Search</h3>
+            <p>Enter your desired .CA domain name and check if it is available.</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <h3>Register</h3>
+            <p>Claim your domain with a one-year registration term.</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <h3>Manage</h3>
+            <p>Track expiry dates, renew domains, and manage everything from your dashboard.</p>
+        </div>
+
+    </div>
+</section>
+
+</body>
+</html>

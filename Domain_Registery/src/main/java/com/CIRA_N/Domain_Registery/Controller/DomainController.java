@@ -1,18 +1,14 @@
 package com.CIRA_N.Domain_Registery.Controller;
 
-import ch.qos.logback.core.model.Model;
 import com.CIRA_N.Domain_Registery.Services.DomainService;
 import com.CIRA_N.Domain_Registery.Services.UserService;
 import com.CIRA_N.Domain_Registery.model.Domain;
 import com.CIRA_N.Domain_Registery.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
 import java.util.List;
@@ -27,70 +23,70 @@ public class DomainController {
     @Autowired
     private UserService userService;
 
-    // -- Get current logged-in user
-    private User getCurrentUser(Principal principal){
+    // ── HELPER: get current logged-in user ────────────────────────────
+    private User getCurrentUser(Principal principal) {
         return userService.getUserByEmail(principal.getName());
     }
 
-    // Check Domain availability (from homepage search)
+    // ── CHECK DOMAIN AVAILABILITY ─────────────────────────────────────
     @GetMapping("/search")
     public String searchDomain(
             @RequestParam String name,
-            Model model
-    ){
+            Model model) {
+
         String domainName = name.toLowerCase().trim();
         boolean available = domainService.isAvailable(domainName);
 
         model.addAttribute("domainName", domainName);
         model.addAttribute("available", available);
 
-        // If taken, show the domain details
-        if(!available){
-            try{
+        if (!available) {
+            try {
                 Domain domain = domainService.getDomainByName(domainName);
-                model.addAttribute("domain", domain);
-            }catch (Exception ignored) {}
+                model.addAttribute("templates/domain", domain);
+            } catch (Exception ignored) {}
         }
-        return "search-result";  // Loads templates/serach-result.html
+        return "search-result";
     }
 
-    // Show domain registration form
+    // ── SHOW DOMAIN REGISTRATION FORM ─────────────────────────────────
     @GetMapping("/register")
     public String showRegisterForm(
             @RequestParam(required = false) String name,
-            Model model
-    ){
+            Model model) {
+
         model.addAttribute("domainName", name != null ? name : "");
-        return "domain/register";
+        return "templates/domain/register";
     }
 
-    // Handle Domain Registration submit
+    // ── HANDLE DOMAIN REGISTRATION SUBMIT ─────────────────────────────
     @PostMapping("/register")
     public String registerDomain(
             @RequestParam String domainName,
             Principal principal,
-            RedirectAttributes redirectAttributes
-    ){
-        try{
+            RedirectAttributes redirectAttributes) {
+
+        try {
             User currentUser = getCurrentUser(principal);
             domainService.registerDomain(domainName, currentUser);
             redirectAttributes.addFlashAttribute("success",
                     "Domain '" + domainName + "' registered successfully!");
             return "redirect:/domains/my";
-        }catch (RuntimeException e){
+
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/domains/register";
         }
     }
 
-    // my domain page
+    // ── MY DOMAINS PAGE ───────────────────────────────────────────────
     @GetMapping("/my")
-    public String myDomains(Principal principal, Model model){
+    public String myDomains(Principal principal, Model model) {
+
         User currentUser = getCurrentUser(principal);
         List<Domain> domains = domainService.getDomainsForUser(currentUser);
 
-        // Summary counts for the dashboard cards
-        long active = domains.stream()
+        long active  = domains.stream()
                 .filter(d -> d.getStatus().name().equals("ACTIVE")).count();
         long expired = domains.stream()
                 .filter(d -> d.getStatus().name().equals("EXPIRED")).count();
@@ -100,42 +96,20 @@ public class DomainController {
         model.addAttribute("expiredCount", expired);
         model.addAttribute("totalCount", domains.size());
 
-        return "domain/my-domains";  // loads templates/domain/my-domains.html
+        return "templates/domain/my-domains";
     }
 
-    // User dashboard
-    @GetMapping("/dashboard")
-    public String userDashboard(Principal principal, Model model){
-
-        User currentUser = getCurrentUser(principal);
-        List<Domain> domains = domainService.getDomainsForUser(currentUser);
-
-        // Expiring soon (within 30 days)
-        List<Domain> expiringSoon = domainService.getExpiringDomains()
-                .stream()
-                .filter(d -> d.getOwner().getId().equals(currentUser.getId()))
-                .toList();
-
-        model.addAttribute("user", currentUser);
-        model.addAttribute("totalDomains", domains.size());
-        model.addAttribute("expiringSoon", expiringSoon.size());
-        model.addAttribute("recentDomains", domains.stream().limit(5).toList());
-
-        return "dashboard/user-dashboard";
-    }
-
-    // ── SHOW RENEW PAGE ──────────────────────────────────────────────
+    // ── SHOW RENEW PAGE ───────────────────────────────────────────────
     @GetMapping("/{id}/renew")
     public String showRenewPage(
             @PathVariable Long id,
-            Principal principal,
             Model model,
             RedirectAttributes redirectAttributes) {
 
         try {
             Domain domain = domainService.getDomainById(id);
-            model.addAttribute("domain", domain);
-            return "domain/renew";  // loads templates/domain/renew.html
+            model.addAttribute("templates/domain", domain);
+            return "templates/domain/renew";
 
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
@@ -143,7 +117,7 @@ public class DomainController {
         }
     }
 
-    // ── HANDLE RENEW SUBMIT ──────────────────────────────────────────
+    // ── HANDLE RENEW SUBMIT ───────────────────────────────────────────
     @PostMapping("/{id}/renew")
     public String renewDomain(
             @PathVariable Long id,
@@ -161,5 +135,4 @@ public class DomainController {
             return "redirect:/domains/my";
         }
     }
-
 }

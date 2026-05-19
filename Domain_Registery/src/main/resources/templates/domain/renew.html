@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Renew Domain</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <h2>Renew Domain</h2>
+
+    <div class="form-card">
+
+        <div class="domain-details">
+            <p><strong>Domain:</strong>
+                <span th:text="${domain.domainName}"></span>
+            </p>
+            <p><strong>Current Status:</strong>
+                <span th:text="${domain.status}" class="badge"></span>
+            </p>
+            <p><strong>Current Expiry:</strong>
+                <span th:text="${domain.expiresAt}"></span>
+            </p>
+            <p><strong>After Renewal:</strong>
+                Will be extended by 1 year
+            </p>
+        </div>
+
+        <form th:action="@{/domains/{id}/renew(id=${domain.id})}"
+              method="post">
+            <button type="submit" class="btn-primary">
+                Confirm Renewal
+            </button>
+            <a th:href="@{/domains/my}" class="btn-secondary">Cancel</a>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

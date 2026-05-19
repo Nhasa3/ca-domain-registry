@@ -15,12 +15,12 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginPage(){
-        return "auth/login";
+        return "templates/auth/login";
     }
 
     @GetMapping("/register")
     public String showRegisterPage(){
-        return "auth/register";
+        return "templates/auth/register";
     }
 
     @PostMapping("/register")
